@@ -14,7 +14,7 @@ RUN npm ci
 COPY . .
 
 # Expose Express server port
-EXPOSE 5000
+EXPOSE 7860
 
 # Start Express backend server
 CMD [ "node", "server.js" ]
