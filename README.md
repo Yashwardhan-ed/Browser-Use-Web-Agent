@@ -145,7 +145,7 @@ Because Playwright requires browser executable binaries (Chromium) and low-level
    ```
 4. Set the **Start Command** to:
    ```bash
-   npm start
+   npm start 
    ```
 5. Add your LLM keys in the Render environment settings (`API_KEY` for Gemini and `OPENAI_API_KEY` for OpenAI).
 
