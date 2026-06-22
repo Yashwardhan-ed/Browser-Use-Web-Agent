@@ -16,9 +16,11 @@ import {
   Link2
 } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function App() {
   // Input fields state
-  const [task, setTask] = useState('Navigate to the Shadcn form page, identify the form elements (Name/Bug Title and Description fields), fill them out, and click submit (In less than 100 characters).');
+  const [task, setTask] = useState('Navigate to the Shadcn form page, identify the form elements (Name/Bug Title and Description fields), fill them out, and click reset (In less than 100 characters).');
   const [startUrl, setStartUrl] = useState('https://ui.shadcn.com/docs/forms/react-hook-form');
   const [provider, setProvider] = useState('demo'); // 'demo' | 'gemini' | 'openai'
   const [model, setModel] = useState('Rule-Based Dynamic Planner');
@@ -95,7 +97,7 @@ export default function App() {
     }
 
     // 1. Hook up the real-time Event Stream (SSE)
-    const sseUrl = 'http://localhost:5000/api/agent/stream';
+    const sseUrl = `${API_BASE}/api/agent/stream`;
     const es = new EventSource(sseUrl);
     eventSourceRef.current = es;
 
@@ -132,7 +134,7 @@ export default function App() {
 
     // 2. Launch run session on backend
     try {
-      const response = await fetch('http://localhost:5000/api/agent/run', {
+      const response = await fetch(`${API_BASE}/api/agent/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -164,7 +166,7 @@ export default function App() {
   const stopAgent = async () => {
     setLogs(prev => [...prev, 'System: Sending termination request...']);
     try {
-      const response = await fetch('http://localhost:5000/api/agent/stop', {
+      const response = await fetch(`${API_BASE}/api/agent/stop`, {
         method: 'POST'
       });
       const data = await response.json();

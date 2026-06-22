@@ -116,3 +116,37 @@ To demonstrate the agent automatically filling the form on:
 ├── package.json              # Root workspace coordinator
 └── README.md
 ```
+
+---
+
+## Deployment Guide
+
+This project is optimized for deployment as a split-architecture application: hosting the static React frontend on **Vercel** and the browser-driving Node.js backend on a containerized service (like **Render** or **Railway**) that supports Playwright's system dependencies.
+
+### 1. Frontend Deployment (Vercel)
+The codebase includes a root-level [vercel.json](file:///home/yashwardhan/Desktop/GenAI/Assignment_4/vercel.json) configuration, making deployment on Vercel simple and automated:
+
+1. Push your repository to GitHub.
+2. Import the repository into your Vercel Dashboard.
+3. Keep the settings as default (Vercel will detect the root `package.json` and automatically run the custom `npm run build` command, compiling the React application and outputting it to `frontend/dist`).
+4. **Environment Variables**: In your Vercel project settings, add the following environment variable:
+   - `VITE_API_URL`: The production URL of your hosted backend server (e.g. `https://your-backend-service.onrender.com`).
+   *Note: If omitted, the frontend will default to talking to `http://localhost:5000` for local runs.*
+
+### 2. Backend Deployment (Render / Railway)
+Because Playwright requires browser executable binaries (Chromium) and low-level Linux libraries (like `libgbm`, `nss`, etc.), it cannot run directly inside serverless functions like Vercel's. Instead, host it on a persistent Node.js environment:
+
+#### Hosting on Render:
+1. Create a new **Web Service** on Render and connect your repository.
+2. Set the **Root Directory** settings to `backend`.
+3. Set the **Build Command** to:
+   ```bash
+   npm install && npx playwright install chromium
+   ```
+4. Set the **Start Command** to:
+   ```bash
+   npm start
+   ```
+5. Add your LLM keys in the Render environment settings (`API_KEY` for Gemini and `OPENAI_API_KEY` for OpenAI).
+
+Once both are deployed, Vercel will host your premium dashboard interface, communicating securely with your custom automation runner in the cloud!
