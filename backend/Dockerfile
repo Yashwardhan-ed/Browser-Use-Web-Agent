@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install Node dependencies cleanly
-RUN npm ci
+RUN npm install
 
 # Copy backend source files
 COPY . .

@@ -22,8 +22,8 @@ export default function App() {
   // Input fields state
   const [task, setTask] = useState('Navigate to the Shadcn form page, identify the form elements (Name/Bug Title and Description fields), fill them out, and click reset (In less than 100 characters).');
   const [startUrl, setStartUrl] = useState('https://ui.shadcn.com/docs/forms/react-hook-form');
-  const [provider, setProvider] = useState('demo'); // 'demo' | 'gemini' | 'openai'
-  const [model, setModel] = useState('Rule-Based Dynamic Planner');
+  const [provider] = useState('gemini');
+  const [model] = useState('gemini-2.5-flash');
   const [headed, setHeaded] = useState(false);
 
   // Agent runner state
@@ -50,16 +50,7 @@ export default function App() {
     }
   }, [logs]);
 
-  // Adjust model defaults based on provider selection
-  useEffect(() => {
-    if (provider === 'gemini') {
-      setModel('gemini-2.5-flash');
-    } else if (provider === 'openai') {
-      setModel('gpt-4o-mini');
-    } else {
-      setModel('Rule-Based Dynamic Planner');
-    }
-  }, [provider]);
+
 
   // Click flashing indicator on screenshot
   useEffect(() => {
@@ -191,7 +182,7 @@ export default function App() {
             <Cpu className="w-6 h-6 animate-pulse" />
           </span>
           <div>
-            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">
+            <h1 className="text-3xl font-extrabold" style={{ color: 'var(--color-secondary)' }}>
               Browser Use Web Agent
             </h1>
             <p className="header-text-subtitle">
@@ -223,8 +214,24 @@ export default function App() {
           {/* CONFIGURATION PANEL */}
           <div className="glass-panel">
             <div className="panel-header">
-              <Settings className="w-4 h-4 text-indigo-400" />
+              <Settings className="w-4 h-4" style={{ color: 'var(--color-secondary)' }} />
               <h2>Control Center</h2>
+            </div>
+
+            {/* Task Prompt */}
+            <div className="form-group">
+              <label htmlFor="task-prompt" className="form-group-label">
+                <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--color-primary)' }} /> Task Prompt / Goal
+              </label>
+              <textarea 
+                id="task-prompt"
+                rows="5"
+                className="form-textarea" 
+                value={task} 
+                onChange={(e) => setTask(e.target.value)}
+                disabled={status !== 'idle' && status !== 'completed' && status !== 'failed'}
+                placeholder="Enter automation instructions..."
+              />
             </div>
 
             {/* Start URL */}
@@ -241,51 +248,6 @@ export default function App() {
                 disabled={status !== 'idle' && status !== 'completed' && status !== 'failed'}
                 placeholder="https://example.com"
               />
-            </div>
-
-            {/* Task Prompt */}
-            <div className="form-group">
-              <label htmlFor="task-prompt" className="form-group-label">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" /> Task Prompt / Goal
-              </label>
-              <textarea 
-                id="task-prompt"
-                rows="3"
-                className="form-textarea" 
-                value={task} 
-                onChange={(e) => setTask(e.target.value)}
-                disabled={status !== 'idle' && status !== 'completed' && status !== 'failed'}
-                placeholder="Enter automation instructions..."
-              />
-            </div>
-
-            {/* Model Provider Choice */}
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="provider-select" className="form-group-label">LLM Provider</label>
-                <select 
-                  id="provider-select"
-                  className="form-select" 
-                  value={provider} 
-                  onChange={(e) => setProvider(e.target.value)}
-                  disabled={status !== 'idle' && status !== 'completed' && status !== 'failed'}
-                >
-                  <option value="demo">Demo Mode (No Key)</option>
-                  <option value="gemini">Google Gemini</option>
-                  <option value="openai">OpenAI GPT</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="model-select" className="form-group-label">Agent Model</label>
-                <input 
-                  id="model-select"
-                  type="text" 
-                  className="form-input"
-                  style={{ color: 'var(--color-muted)', cursor: 'not-allowed' }}
-                  value={model} 
-                  readOnly 
-                />
-              </div>
             </div>
 
 
@@ -328,12 +290,12 @@ export default function App() {
           </div>
 
           {/* HELP DOCUMENTATION CARD */}
-          <div className="glass-panel" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(15, 23, 42, 0.75))' }}>
-            <div className="panel-header" style={{ borderBottomColor: 'rgba(255, 255, 255, 0.05)' }}>
-              <HelpCircle className="w-4 h-4 text-cyan-400" />
-              <h3>Task Guidelines</h3>
+          <div className="glass-panel" style={{ background: 'var(--bg-card)', borderColor: 'var(--color-primary)' }}>
+            <div className="panel-header" style={{ borderBottomColor: 'var(--color-primary)' }}>
+              <HelpCircle className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+              <h3 style={{ color: 'var(--color-primary)' }}>Task Guidelines</h3>
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-subtext)', lineHeight: '1.5' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--color-text)', lineHeight: '1.5' }}>
               <p style={{ marginBottom: '0.5rem' }}>
                 To execute the target task, run with <strong>Demo Mode</strong>.
               </p>
@@ -354,13 +316,13 @@ export default function App() {
           {/* LIVE SIMULATOR FEED */}
           <div className="glass-panel">
             <div className="browser-view-header">
-              <div className="flex-row-center" style={{ gap: '0.5rem' }}>
-                <Compass className="w-4 h-4 text-cyan-400" />
+              <div className="flex-row-center" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Compass className="w-4 h-4" style={{ color: 'var(--color-secondary)' }} />
                 <h3>Live Agent Browser Feed</h3>
               </div>
               
               {/* Overlay elements toggle */}
-              <div className="flex-row-center" style={{ gap: '0.5rem' }}>
+              <div className="flex-row-center" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <label htmlFor="overlay-toggle" style={{ fontSize: '0.75rem', color: 'var(--color-subtext)', cursor: 'pointer' }}>Overlay Interactive Targets</label>
                 <input 
                   id="overlay-toggle"
